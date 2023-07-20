@@ -25,7 +25,7 @@ const Detail = () => {
 
 
   if (loading) {
-    return <div>Cargando...</div>;
+    return <div>Loading...</div>;
   }
 
   if (!countryData) {
@@ -35,9 +35,9 @@ const Detail = () => {
     <div>
       <img src={countryData.flag} alt={countryData.name} />
       <h2>Name: {countryData.name}</h2>
-      <h2>ID: {countryData.id}</h2>
-      <p>Continent: {countryData.continent}</p>
-      <p>Capital: {countryData.capital}</p>
+      <h3>ID: {countryData.id}</h3>
+      <h3>Continent: {countryData.continent}</h3>
+      <h3>Capital: {countryData.capital}</h3>
       <h3>Population: {countryData.population}</h3>
       {countryData.Activities && countryData.Activities.length > 0 && (
         <>
@@ -54,7 +54,7 @@ const Detail = () => {
         </>
       )}
       <Link to="/home">
-        <button>Volver a Home</button>
+        <button>Home</button>
       </Link>
     </div>
   );

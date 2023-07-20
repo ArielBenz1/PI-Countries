@@ -7,14 +7,6 @@ const Pagination = ({ currentPage, itemsPerPage, totalItems, onPageChange }) => 
     onPageChange(pageNumber);
   };
 
-  const handleFirstPage = () => {
-    handlePageChange(1);
-  };
-
-  const handleLastPage = () => {
-    handlePageChange(totalPages);
-  };
-
   const handleNextPage = () => {
     if (currentPage < totalPages) {
       handlePageChange(currentPage + 1);
@@ -29,12 +21,6 @@ const Pagination = ({ currentPage, itemsPerPage, totalItems, onPageChange }) => 
 
   const renderPaginationLinks = () => {
     const links = [];
-
-    links.push(
-      <button key="first" onClick={handleFirstPage} disabled={currentPage === 1}>
-        &lt;&lt;
-      </button>
-    );
 
     links.push(
       <button key="previous" onClick={handlePreviousPage} disabled={currentPage === 1}>
@@ -57,12 +43,6 @@ const Pagination = ({ currentPage, itemsPerPage, totalItems, onPageChange }) => 
     links.push(
       <button key="next" onClick={handleNextPage} disabled={currentPage === totalPages}>
         &gt;
-      </button>
-    );
-
-    links.push(
-      <button key="last" onClick={handleLastPage} disabled={currentPage === totalPages}>
-        &gt;&gt;
       </button>
     );
 

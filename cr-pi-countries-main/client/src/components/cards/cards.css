@@ -7,7 +7,7 @@
 .card {
   flex-basis: calc(20% - 30px);
   flex-grow: 1;
-  height: 290px;
+  height: auto;
   margin: 2px;
   padding: 10px;
   border-radius: 5px;
@@ -18,9 +18,8 @@
 }
 
 .card img {
-  width: 100%;
-  height: auto;
-  max-height: 55%;
+  width: 175px;
+  height: 100px;
   border-radius: 5px;
 }
 

@@ -8,7 +8,7 @@ import style from './App.css'
 
 function App() {
   return (
-    <div className={style}>
+    <div>
      <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/home" element={<HomePage />} />

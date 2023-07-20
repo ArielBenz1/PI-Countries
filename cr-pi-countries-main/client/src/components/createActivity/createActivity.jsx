@@ -13,7 +13,8 @@ const ActivityForm = () => {
   });
 
   const [searchText, setSearchText] = useState('');
-  const [showFilteredCountries, setShowFilteredCountries] = useState(false); // Nuevo estado para controlar la visualización de los países filtrados
+  const [showFilteredCountries, setShowFilteredCountries] = useState(false);
+  const [activityCreated, setActivityCreated] = useState(false);
   const countries = useSelector((state) => state.countries);
   const dispatch = useDispatch();
 
@@ -42,56 +43,64 @@ const ActivityForm = () => {
     setActivityData({ ...activityData, countryId: updatedCountryId });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log('Data to be sent:', activityData);
-    dispatch(createActivities(activityData));
-  };
-
-  // Filtrar países según el texto de búsqueda
   const filteredCountries = countries.filter((country) =>
     country.name.toLowerCase().includes(searchText.toLowerCase())
   );
 
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    if (
+      activityData.name.trim() === '' ||
+      activityData.difficulty.trim() === '' ||
+      activityData.season.trim() === '' ||
+      activityData.countryId.length === 0
+    ) {
+      alert('Por favor, complete todos los campos antes de enviar el formulario.');
+      return; 
+    }
+    dispatch(createActivities(activityData));
+    setActivityCreated(true);
+  };
+
   return (
     <form onSubmit={handleSubmit}>
       <div>
-        <label>Nombre:</label>
+        <label>Name:</label>
         <input type="text" name="name" value={activityData.name} onChange={handleInputChange} />
       </div>
       <div>
-        <label>Dificultad:</label>
-        <input
-          type="number"
-          name="difficulty"
-          value={activityData.difficulty}
-          onChange={handleInputChange}
-          min="1"
-          max="5"
-        />
-      </div>
-      <div>
-        <label>Temporada:</label>
-        <select name="season" value={activityData.season} onChange={handleInputChange}>
-          <option value="">Seleccione una temporada</option>
-          <option value="Verano">Verano</option>
-          <option value="Otoño">Otoño</option>
-          <option value="Invierno">Invierno</option>
-          <option value="Primavera">Primavera</option>
+        <label>Difficulty:</label>
+        <select name="difficulty" value={activityData.difficulty} onChange={handleInputChange}>
+          <option value="">Select a difficulty</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
         </select>
       </div>
       <div>
-        <label>Pais/es:</label>
+        <label>Season:</label>
+        <select name="season" value={activityData.season} onChange={handleInputChange}>
+          <option value="">Select a Season</option>
+          <option value="Summer">Summer</option>
+          <option value="Autumn">Autumn</option>
+          <option value="Winter">Winter</option>
+          <option value="Spring">Spring</option>
+        </select>
+      </div>
+      <div>
+        <label>Country:</label>
         <input
           type="text"
           placeholder="Search country..."
           value={searchText}
-          onChange={(e) => {
-            setSearchText(e.target.value);
-            setShowFilteredCountries(true); // Mostrar solo países filtrados al cambiar el texto de búsqueda
+          onChange={(event) => {
+            setSearchText(event.target.value);
+            setShowFilteredCountries(true); 
           }}
         />
-        {showFilteredCountries ? ( // Mostrar solo si se activa el estado showFilteredCountries
+        {showFilteredCountries ? ( 
           <ul>
             {filteredCountries.map((country) => {
               const isSelected = activityData.countryId.includes(country.id);
@@ -112,7 +121,7 @@ const ActivityForm = () => {
         ) : null}
       </div>
       <div>
-        <label>Pais/es selecionados:</label>
+        <label>Selected countries:</label>
         <ul>
           {activityData.countryId.map((countryId) => {
             const country = countries.find((country) => country.id === countryId);
@@ -127,8 +136,9 @@ const ActivityForm = () => {
           })}
         </ul>
       </div>
+      {activityCreated && <p>La actividad fue creada correctamente.</p>}
       <Link to="/home">
-      <button>Volver a Home</button>
+      <button>Home</button>
       </Link>
       <button type="submit">Create Activity</button>
     </form>

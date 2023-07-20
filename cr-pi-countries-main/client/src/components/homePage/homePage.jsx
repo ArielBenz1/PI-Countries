@@ -29,7 +29,6 @@ const HomePage = () => {
     }
   }, [searchResult]);
 
-
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
   };
@@ -73,6 +72,7 @@ const HomePage = () => {
       return countries;
     }
   };
+
   useEffect(() => {
     if (activityFilter) {
       searchCountriesByActivity(activityFilter)
@@ -86,21 +86,21 @@ const HomePage = () => {
   }, [activityFilter]); 
   
   const searchCountriesByActivity = async (activityName) => {
-    const countriesWithActivity = [];
-      for (const country of allCountries) {
-        const countryDetails = await dispatch(getCountryById(country.id));
-        if (
-          countryDetails &&
-          countryDetails.Activities &&
-          countryDetails.Activities.some((activity) => activity.name === activityName)
-        ) {
-          countriesWithActivity.push(countryDetails);
-        }
-      }
-      return countriesWithActivity;
-    };
+    const promises = allCountries.map((country) => dispatch(getCountryById(country.id)));
+    const countryDetailsArray = await Promise.all(promises);
+  
+    const countriesWithActivity = countryDetailsArray.filter(
+      (countryDetails) =>
+        countryDetails &&
+        countryDetails.Activities &&
+        countryDetails.Activities.some((activity) => activity.name === activityName)
+    );
+  
+    return countriesWithActivity;
+  };
 
   const countriesToRender = searchResult.length === 0 ? allCountries : searchResult;
+
   const filteredCountries = continentFilter
     ? countriesToRender.filter((country) => country.continent === continentFilter)
     : countriesToRender;
@@ -122,11 +122,12 @@ const HomePage = () => {
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = countriesWithActivity.slice(indexOfFirstItem, indexOfLastItem);
+
   return (
     <div>
       <SearchBar setSearchResult={setSearchResult} />
-      <select value={continentFilter} onChange={(e) => handleContinentFilterChange(e.target.value)}>
-        <option value="">Todos los continentes</option>
+      <select value={continentFilter} onChange={(event) => handleContinentFilterChange(event.target.value)}>
+        <option value="">All countries</option>
         <option value="Africa">África</option>
         <option value="South America">South America</option>
         <option value="North America">North America</option>
@@ -135,8 +136,8 @@ const HomePage = () => {
         <option value="Europe">Europa</option>
         <option value="Oceania">Oceanía</option>
       </select>
-      <select value={activityFilter} onChange={(e) => handleActivityFilterChange(e.target.value)}>
-        <option value="">Todas las actividades</option>
+      <select value={activityFilter} onChange={(event) => handleActivityFilterChange(event.target.value)}>
+        <option value="">All activities</option>
         {uniqueActivities.map((activity) => (
           <option key={activity} value={activity}>
             {activity}
@@ -144,17 +145,17 @@ const HomePage = () => {
         ))}
       </select>
       <select value={populationSortOrder} onChange={handlePopulationSortOrderChange}>
-        <option value="">Sin ordenamiento por población</option>
-        <option value="asc">Menor a mayor población</option>
-        <option value="desc">Mayor a menor población</option>
+        <option value="">N/S</option>
+        <option value="asc">Lower to Higher population</option>
+        <option value="desc">Highest to Lowest population</option>
       </select>
       <select value={nameSortOrder} onChange={handleNameSortOrderChange}>
-        <option value="">Sin ordenamiento por nombre</option>
+        <option value="">N/S</option>
         <option value="asc">A-Z</option>
         <option value="desc">Z-A</option>
       </select>
       <Link to="/activities">
-        <button>Crear Actividad</button>
+        <button>Create Activities</button>
       </Link>
       <Cards countries={currentItems} />
       <Pagination
